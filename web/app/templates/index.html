@@ -1,0 +1,42 @@
+{% extends "_layout.html" %}
+
+{% block title %}StyleShop - Home{% endblock %}
+
+{% block content %}
+  <h1 class="page-title">Nossos Produtos</h1>
+  
+  <div class="product-grid">
+    {% for produto in produtos %}
+      <div class="product-card">
+        <div class="card-image-container">
+          {% if produto.imagens|length > 1 %}
+            <div class="carousel">
+              {% for imagem in produto.imagens %}
+                <img src="{{ url_for('uploaded_file', filename=imagem) }}" alt="{{ produto.nome }}" class="carousel-item">
+              {% endfor %}
+            </div>
+            <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
+          {% elif produto.imagens|length == 1 %}
+            <img src="{{ url_for('uploaded_file', filename=produto.imagens[0]) }}" alt="{{ produto.nome }}" class="static-image">
+          {% else %}
+            <img src="https://via.placeholder.com/350x250" alt="Sem Imagem" class="static-image">
+          {% endif %}
+          <button class="favorite-btn"><i class="far fa-heart"></i></button>
+        </div>
+        <article class="card-content">
+          <h2 class="product-name">{{ produto.nome }}</h2>
+          <p class="product-description">Descrição breve do seu produto de alta qualidade.</p>
+          <div class="card-footer">
+            <span class="product-price">R$ {{ "%.2f"|format(produto.preco|float) }}</span>
+            <button class="add-to-cart-btn">
+              <i class="fas fa-shopping-cart"></i> Adicionar
+            </button>
+          </div>
+        </article>
+      </div>
+    {% else %}
+      <p>Nenhum produto cadastrado ainda.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

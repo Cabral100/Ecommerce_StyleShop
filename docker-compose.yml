@@ -1,0 +1,79 @@
+# docker-compose.yml (CORRIGIDO)
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+    volumes:
+      - mongo_data:/data/db
+    # NOVO: Healthcheck para garantir que o MongoDB está pronto
+    healthcheck:
+      test: |
+        mongosh --host localhost --port 27017 \
+                --username $$MONGO_INITDB_ROOT_USERNAME \
+                --password $$MONGO_INITDB_ROOT_PASSWORD \
+                --authenticationDatabase admin \
+                --eval 'db.runCommand("ping")'
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    # NOVO: Healthcheck para garantir que o MySQL está pronto
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cassandra:
+    image: cassandra:4.1
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    # NOVO: Healthcheck para garantir que o Cassandra está pronto
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces'"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  web:
+    build: ./web
+    container_name: ecommerce_web
+    ports:
+      - "5000:5000"
+    env_file: .env
+    volumes:
+      - ./web:/app
+    # MODIFICADO: Agora espera os serviços estarem "saudáveis" antes de iniciar
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      cassandra:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
+  mysql_data:
+  cassandra_data:
