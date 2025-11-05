@@ -1,0 +1,10 @@
+docker start mongodb cassandra mysql (inicializar todos os bancos)
+
+(Acessar o mongoDB)
+docker exec -it mongodb mongosh
+
+(Acessar o cassandra)
+docker exec -it cassandra cqlsh
+
+(Acessar o sql)
+docker exec -it mysql psql -U postgres

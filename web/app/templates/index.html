@@ -1,42 +1,38 @@
 {% extends "_layout.html" %}
-
-{% block title %}StyleShop - Home{% endblock %}
-
+{% block title %}Bem-vindo à STYLESHOP{% endblock %}
 {% block content %}
-  <h1 class="page-title">Nossos Produtos</h1>
-  
-  <div class="product-grid">
-    {% for produto in produtos %}
-      <div class="product-card">
-        <div class="card-image-container">
-          {% if produto.imagens|length > 1 %}
-            <div class="carousel">
-              {% for imagem in produto.imagens %}
-                <img src="{{ url_for('uploaded_file', filename=imagem) }}" alt="{{ produto.nome }}" class="carousel-item">
-              {% endfor %}
-            </div>
-            <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
-            <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
-          {% elif produto.imagens|length == 1 %}
-            <img src="{{ url_for('uploaded_file', filename=produto.imagens[0]) }}" alt="{{ produto.nome }}" class="static-image">
-          {% else %}
-            <img src="https://via.placeholder.com/350x250" alt="Sem Imagem" class="static-image">
-          {% endif %}
-          <button class="favorite-btn"><i class="far fa-heart"></i></button>
-        </div>
-        <article class="card-content">
-          <h2 class="product-name">{{ produto.nome }}</h2>
-          <p class="product-description">Descrição breve do seu produto de alta qualidade.</p>
-          <div class="card-footer">
-            <span class="product-price">R$ {{ "%.2f"|format(produto.preco|float) }}</span>
-            <button class="add-to-cart-btn">
-              <i class="fas fa-shopping-cart"></i> Adicionar
-            </button>
-          </div>
-        </article>
-      </div>
-    {% else %}
-      <p>Nenhum produto cadastrado ainda.</p>
-    {% endfor %}
-  </div>
+{# --- DEFINIÇÃO DOS 3 PRODUTOS FICTÍCIOS PARA O CAROUSEL --- #}
+{% set fictitious_products = [
+    {
+        'name': 'Estilo Urbano',
+        'description': 'Conforto e atitude para o seu dia a dia.',
+        'image': 'https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?q=80&w=1965&auto=format&fit=crop',
+        'url': url_for('routes.products')
+    },
+    {
+        'name': 'Performance Total',
+        'description': 'Tecnologia e design para superar seus limites.',
+        'image': 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=2080&auto=format&fit=crop',
+        'url': url_for('routes.products')
+    },
+    {
+        'name': 'Minimalismo Clássico',
+        'description': 'Peças essenciais que nunca saem de moda.',
+        'image': 'https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=1935&auto=format&fit=crop',
+        'url': url_for('routes.products')
+    }
+] %}
+<section class="relative w-full h-[85vh] overflow-hidden">
+    <div id="carousel-slides" class="relative w-full h-full">
+        {% for item in fictitious_products %}<div class="carousel-slide absolute w-full h-full transition-opacity duration-1000 ease-in-out opacity-0 {% if loop.first %}opacity-100{% endif %}"><img src="{{ item.image }}" alt="{{ item.name }}" class="w-full h-full object-cover object-center"><div class="absolute inset-0 bg-black/40"></div><div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-6"><h2 class="heading text-5xl md:text-7xl lg:text-8xl drop-shadow-lg">{{ item.name }}</h2><p class="text-xl mt-4 max-w-lg drop-shadow-md">{{ item.description }}</p><a href="{{ item.url }}" class="mt-8 bg-white text-black font-bold uppercase tracking-wider py-3 px-10 hover:bg-opacity-90 transition-transform hover:scale-105">Ver Coleção</a></div></div>{% endfor %}
+    </div>
+    <button id="prev-slide" class="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:opacity-70 transition">&#10094;</button>
+    <button id="next-slide" class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:opacity-70 transition">&#10095;</button>
+    <div id="carousel-dots" class="absolute bottom-5 left-1/2 -translate-x-1/2 flex space-x-3">
+        {% for item in fictitious_products %}<button class="carousel-dot h-3 w-3 rounded-full bg-white/50 hover:bg-white transition {% if loop.first %}active-dot{% endif %}"></button>{% endfor %}
+    </div>
+</section>
+<section class="py-16"><div class="container mx-auto px-6"><h2 class="heading text-3xl text-center mb-10">Novidades</h2><div class="grid grid-cols-2 md:grid-cols-4 gap-6">{% for produto in produtos %}{% if produto.imagens and produto.imagens|length > 0 %}<a href="{{ url_for('routes.product_detail', product_id=produto._id) }}" class="group"><div class="overflow-hidden rounded-md"><img src="{{ url_for('static', filename='uploads/' + produto.imagens[0]) }}" alt="{{ produto.nome }}" class="w-full h-auto object-cover aspect-[4/5] group-hover:scale-105 transition-transform duration-300"></div><h3 class="font-semibold mt-4 text-zinc-900">{{ produto.nome }}</h3><p class="text-zinc-700">R$ {{ "%.2f"|format(produto.preco|float) }}</p></a>{% endif %}{% endfor %}</div></div></section>
+<style>.active-dot { background-color: white; }</style>
+<script>document.addEventListener('DOMContentLoaded',function(){const s=document.querySelectorAll('.carousel-slide');if(s.length<=1)return;const t=document.querySelectorAll('.carousel-dot'),e=document.getElementById('next-slide'),n=document.getElementById('prev-slide');let o=0,l;function c(i){s.forEach((c,r)=>c.classList.toggle('opacity-100',r===i)),t.forEach((c,r)=>c.classList.toggle('active-dot',r===i)),o=i}function u(){c((o+1)%s.length)}function d(){clearInterval(l),l=setInterval(u,5e3)}e.addEventListener('click',()=>{u(),clearInterval(l),d()}),n.addEventListener('click',()=>{c((o-1+s.length)%s.length),clearInterval(l),d()}),t.forEach((c,r)=>{c.addEventListener('click',()=>{c(r),clearInterval(l),d()})}),d()});</script>
 {% endblock %}

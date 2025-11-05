@@ -1,13 +1,15 @@
-FROM python:3.11-slim
+# Use uma imagem base oficial do Python
+FROM python:3.9-slim
+
 WORKDIR /app
 
-ENV DEBIAN_FRONTEND=noninteractive
+COPY requirements.txt .
 
-COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app
-RUN chmod +x /app/entrypoint.sh
+COPY . .
 
 EXPOSE 5000
-CMD ["/app/entrypoint.sh"]
+
+
+CMD ["python", "app.py"]

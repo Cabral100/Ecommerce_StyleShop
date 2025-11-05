@@ -1,0 +1,86 @@
+{% extends "_layout.html" %}
+{% block title %}Gerenciar Produtos{% endblock %}
+{% block content %}
+<div class="container mx-auto p-8 max-w-5xl">
+    <h1 class="heading text-4xl mb-8">Gerenciar Produtos</h1>
+
+    <!-- Formulário para Adicionar Novo Produto -->
+    <div class="bg-white border border-gray-200 p-8 rounded-lg mb-12">
+        <h2 class="text-2xl font-bold mb-6">Adicionar Novo Produto</h2>
+        <form action="{{ url_for('routes.admin_products') }}" method="post" enctype="multipart/form-data" class="space-y-6">
+            <div>
+                <label class="font-semibold text-sm mb-1 block" for="nome">Nome do Produto</label>
+                <input class="border rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black" id="nome" type="text" name="nome" required>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="font-semibold text-sm mb-1 block" for="preco">Preço (ex: 199.90)</label>
+                    <input class="border rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black" id="preco" type="number" step="0.01" name="preco" required>
+                </div>
+                <div>
+                    <label class="font-semibold text-sm mb-1 block" for="category">Categoria</label>
+                    <select name="category" id="category" class="border rounded w-full py-2 px-3 bg-white focus:outline-none focus:ring-2 focus:ring-black" required>
+                        <option value="women">Feminino</option>
+                        <option value="men">Masculino</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="font-semibold text-sm mb-1 block" for="descricao">Descrição</label>
+                <textarea class="border rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black" id="descricao" name="descricao" rows="4"></textarea>
+            </div>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="font-semibold text-sm mb-1 block" for="colors">Cores (separadas por vírgula)</label>
+                    <input class="border rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black" id="colors" type="text" name="colors" placeholder="Preto, Branco, Azul" required>
+                </div>
+                <div>
+                    <label class="font-semibold text-sm mb-1 block" for="sizes">Tamanhos (separadas por vírgula)</label>
+                    <input class="border rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black" id="sizes" type="text" name="sizes" placeholder="P, M, G, GG" required>
+                </div>
+            </div>
+            <div>
+                <label class="font-semibold text-sm mb-1 block" for="imagens">Imagens do Produto (selecione várias)</label>
+                <input class="border rounded w-full py-2 px-3" id="imagens" type="file" name="imagens" multiple accept="image/*" required>
+            </div>
+            <button class="bg-black text-white font-semibold py-3 px-8 rounded-md hover:bg-zinc-800 transition" type="submit">
+                Adicionar Produto
+            </button>
+        </form>
+    </div>
+    
+    <!-- Tabela de Produtos Existentes -->
+    <div class="bg-white border border-gray-200 p-8 rounded-lg">
+        <h2 class="text-2xl font-bold mb-6">Produtos Cadastrados</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="border-b">
+                        <th class="p-3">Imagem</th>
+                        <th class="p-3">Nome</th>
+                        <th class="p-3">Preço</th>
+                        <th class="p-3">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produto in produtos %}
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3">
+                            {% if produto.imagens and produto.imagens|length > 0 %}
+                            <img src="{{ url_for('static', filename='uploads/' + produto.imagens[0]) }}" alt="{{ produto.nome }}" class="w-16 h-20 object-cover rounded-md">
+                            {% endif %}
+                        </td>
+                        <td class="p-3 font-medium">{{ produto.nome }}</td>
+                        <td class="p-3">R$ {{ "%.2f"|format(produto.preco|float) }}</td>
+                        <td class="p-3">
+                            <a href="#" class="text-blue-600 hover:underline">Editar</a>
+                            <a href="#" class="text-red-600 hover:underline ml-4">Excluir</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
