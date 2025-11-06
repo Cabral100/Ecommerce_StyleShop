@@ -110,29 +110,3 @@ Crie um arquivo `.env` na pasta `web/` (baseado no `.env.example`, se existir) c
 
 Existem duas formas principais de executar este projeto: via Docker (recomendado) ou localmente para desenvolvimento.
 
-### 1. Configuração de Ambiente (.env)
-
-Independentemente do método de execução, você precisará criar um arquivo `.env` na pasta `web/`. Este arquivo armazena as variáveis de ambiente necessárias para conectar aos bancos de dados.
-
-**Arquivo `web/.env`:**
-
-```ini
-# Chave secreta do Flask
-SECRET_KEY=uma-chave-secreta-de-desenvolvimento-muito-segura
-
-# MySQL
-MYSQL_ROOT_PASSWORD=root123
-MYSQL_DATABASE=ecommerce
-MYSQL_HOST=mysql # Use 'mysql' para Docker ou 'localhost' para execução local
-
-# MongoDB
-MONGO_USER=admin
-MONGO_PASS=admin123
-MONGO_HOST=mongodb # Use 'mongodb' para Docker ou 'localhost' para execução local
-MONGO_PORT=27017
-MONGO_INITDB_DATABASE=ecommerce
-
-# Cassandra
-CASSANDRA_CONTACT_POINTS=cassandra # Use 'cassandra' para Docker ou 'localhost' para execução local
-
-
