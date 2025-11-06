@@ -7,17 +7,16 @@
         
         {% if produtos %}
         <div class="bg-white border rounded-lg p-6">
-            <!-- Itens do Carrinho -->
             {% for produto in produtos %}
             <div class="flex items-center justify-between py-4 border-b">
                 <div class="flex items-center space-x-6">
-                    <!-- ESTA É A LINHA QUE FOI CORRIGIDA -->
                     <img src="{{ url_for('static', filename='uploads/' + produto.imagens[0]) if produto.imagens else 'https://via.placeholder.com/112x144?text=STYLE' }}" alt="{{ produto.nome }}" class="w-28 h-36 object-cover rounded-md">
                     <div>
                         <h2 class="font-semibold text-lg">{{ produto.nome }}</h2>
                         <p class="text-zinc-600">Cor: {{ produto.color }}</p>
                         <p class="text-zinc-600">Tamanho: {{ produto.size }}</p>
-                        <a href="{{ url_for('routes.remove_from_cart', item_id=produto.item_id) }}" class="text-red-500 text-sm hover:underline mt-2 inline-block">Remover</a>
+                        
+                        <a href="{{ url_for('routes.remove_from_cart', item_id=produto.cart_item_id) }}" class="text-red-500 text-sm hover:underline mt-2 inline-block">Remover</a>
                     </div>
                 </div>
                 <div class="text-right">
@@ -27,7 +26,6 @@
             </div>
             {% endfor %}
 
-            <!-- Total e Checkout -->
             <div class="mt-6 flex justify-end items-center">
                 <span class="text-xl font-bold">Total: R$ {{ "%.2f"|format(total) }}</span>
                 <form action="{{ url_for('routes.checkout') }}" method="post" class="ml-6">

@@ -1,4 +1,3 @@
-# docker-compose.yml (CORRIGIDO)
 version: '3.8'
 
 services:
@@ -64,7 +63,6 @@ services:
     env_file: .env
     volumes:
       - ./web:/app
-    # MODIFICADO: Agora espera os serviços estarem "saudáveis" antes de iniciar
     depends_on:
       mongodb:
         condition: service_healthy

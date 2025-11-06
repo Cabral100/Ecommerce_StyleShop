@@ -4,7 +4,6 @@
 <div class="container mx-auto p-8 max-w-5xl">
     <h1 class="heading text-4xl mb-8">Gerenciar Produtos</h1>
 
-    <!-- Formulário para Adicionar Novo Produto -->
     <div class="bg-white border border-gray-200 p-8 rounded-lg mb-12">
         <h2 class="text-2xl font-bold mb-6">Adicionar Novo Produto</h2>
         <form action="{{ url_for('routes.admin_products') }}" method="post" enctype="multipart/form-data" class="space-y-6">
@@ -18,11 +17,58 @@
                     <input class="border rounded w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-black" id="preco" type="number" step="0.01" name="preco" required>
                 </div>
                 <div>
-                    <label class="font-semibold text-sm mb-1 block" for="category">Categoria</label>
+                    <label class="font-semibold text-sm mb-1 block" for="category">Categoria (Gênero)</label>
                     <select name="category" id="category" class="border rounded w-full py-2 px-3 bg-white focus:outline-none focus:ring-2 focus:ring-black" required>
                         <option value="women">Feminino</option>
                         <option value="men">Masculino</option>
                     </select>
+                </div>
+            </div>
+            
+            <div>
+                <label class="font-semibold text-sm mb-1 block" for="product_type_select">Tipo de Produto</label>
+                <select name="product_type" id="product_type_select" class="border rounded w-full py-2 px-3 bg-white focus:outline-none focus:ring-2 focus:ring-black" required>
+                    <option value="">Selecione o tipo</option>
+                    <option value="camiseta">Camiseta</option>
+                    <option value="sapato">Sapato</option>
+                    <option value="touca">Touca</option>
+                    </select>
+            </div>
+
+            <div id="campos_camiseta" class="dynamic-fields space-y-6 p-4 border rounded-md" style="display:none;">
+                <h3 class="font-semibold">Detalhes da Camiseta</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="font-semibold text-sm mb-1 block">Tipo de Gola</label>
+                        <input class="border rounded w-full py-2 px-3" name="tipo_gola" placeholder="Ex: V, Redonda, Alta">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-sm mb-1 block">Tipo de Manga</label>
+                        <input class="border rounded w-full py-2 px-3" name="tipo_manga" placeholder="Ex: Curta, Longa, Regata">
+                    </div>
+                </div>
+            </div>
+
+            <div id="campos_sapato" class="dynamic-fields space-y-6 p-4 border rounded-md" style="display:none;">
+                <h3 class="font-semibold">Detalhes do Sapato</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="font-semibold text-sm mb-1 block">Cor do Cadarço</label>
+                        <input class="border rounded w-full py-2 px-3" name="cor_cadarco" placeholder="Ex: Branco">
+                    </div>
+                    <div>
+                        <label class="font-semibold text-sm mb-1 block">Material da Sola</label>
+                        <input class="border rounded w-full py-2 px-3" name="material_sola" placeholder="Ex: Borracha, Couro">
+                    </div>
+                </div>
+            </div>
+            
+            <div id="campos_touca" class="dynamic-fields space-y-6 p-4 border rounded-md" style="display:none;">
+                <h3 class="font-semibold">Detalhes da Touca</h3>
+                <div>
+                    <label class="flex items-center gap-2">
+                        <input name="tem_pompom" type="checkbox" value="true" class="h-4 w-4"> Tem Pompom?
+                    </label>
                 </div>
             </div>
             <div>
@@ -49,7 +95,6 @@
         </form>
     </div>
     
-    <!-- Tabela de Produtos Existentes -->
     <div class="bg-white border border-gray-200 p-8 rounded-lg">
         <h2 class="text-2xl font-bold mb-6">Produtos Cadastrados</h2>
         <div class="overflow-x-auto">
@@ -83,4 +128,22 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('product_type_select').addEventListener('change', function() {
+    // Esconde todos os grupos de campos dinâmicos
+    document.querySelectorAll('.dynamic-fields').forEach(function(div) {
+        div.style.display = 'none';
+    });
+    
+    // Mostra o grupo de campos da categoria selecionada
+    var selectedType = this.value;
+    if (selectedType) {
+        var fieldsDiv = document.getElementById('campos_' + selectedType);
+        if (fieldsDiv) {
+            fieldsDiv.style.display = 'block';
+        }
+    }
+});
+</script>
 {% endblock %}

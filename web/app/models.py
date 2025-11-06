@@ -24,6 +24,7 @@ def init_mysql():
                 senha VARCHAR(255) NOT NULL
             );
         """))
+        ##Ligação de favoritos entre usuários e produtos (chave composta)
         conn.execute(text("""
             CREATE TABLE IF NOT EXISTS favoritos (
                 user_id INT,
@@ -43,6 +44,7 @@ mongo_uri = f"mongodb://{MONGO_USER}:{MONGO_PASS}@{MONGO_HOST}:{MONGO_PORT}/"
 mongo_client = MongoClient(mongo_uri)
 mongo_db = mongo_client[MONGO_DB]
 produtos_collection = mongo_db["produtos"]
+carrinhos_collection = mongo_db["carrinhos"] # <-- ALTERAÇÃO: Nova coleção para o carrinho
 
 # Cassandra
 CASSANDRA_CONTACT_POINTS = os.getenv("CASSANDRA_CONTACT_POINTS", "cassandra").split(",")
@@ -68,17 +70,17 @@ def init_cassandra():
     WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
     """)
     cassandra_session.set_keyspace("ecommerce")
+    
     cassandra_session.execute("""
-    CREATE TABLE IF NOT EXISTS carrinho_items (
+    CREATE TABLE IF NOT EXISTS pedidos_por_usuario (
         user_id int,
-        item_id timeuuid,
-        product_id text,
-        size text,
-        color text,
-        quantity int,
-        added_time timestamp,
-        PRIMARY KEY (user_id, item_id)
-    ) WITH CLUSTERING ORDER BY (item_id DESC);
+        pedido_id timeuuid,
+        data_pedido timestamp,
+        status text,
+        total_pedido float,
+        itens list<frozen<map<text, text>>>,
+        PRIMARY KEY (user_id, pedido_id)
+    ) WITH CLUSTERING ORDER BY (pedido_id DESC);
     """)
 
 def init_all():

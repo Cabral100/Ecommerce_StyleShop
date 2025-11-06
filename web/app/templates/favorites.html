@@ -5,10 +5,26 @@
     <div class="text-left mb-10 border-b pb-6">
         <h1 class="heading text-4xl text-zinc-900">FAVORITOS</h1>
     </div>
-    
-    <div class="text-center py-20">
-        <h2 class="heading text-3xl text-zinc-800">EM BREVE</h2>
-        <p class="text-gray-600 mt-4">A funcionalidade de favoritar produtos estará disponível em breve.</p>
-    </div>
+
+    {% if produtos %}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {% for produto in produtos %}
+                <div class="border rounded-lg p-4 bg-white shadow-sm">
+                    <img src="{{ url_for('static', filename='uploads/' + produto.imagens[0]) }}" class="w-full h-48 object-cover rounded-md mb-3">
+                    <h3 class="font-semibold text-lg">{{ produto.nome }}</h3>
+                    <p class="text-gray-600 mb-3">R$ {{ produto.preco }}</p>
+                    <form action="{{ url_for('routes.remove_from_favorites') }}" method="POST">
+                        <input type="hidden" name="product_id" value="{{ produto._id }}">
+                        <button type="submit" class="text-red-600 hover:underline">Remover</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-20">
+            <h2 class="heading text-3xl text-zinc-800">Nenhum produto favoritado ainda</h2>
+            <p class="text-gray-600 mt-4">Adicione seus produtos favoritos para vê-los aqui.</p>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -7,22 +7,56 @@
             
             <div>
                 {% if produto.imagens and produto.imagens|length > 0 %}
-                <div class="mb-4"><img id="main-image" src="{{ url_for('static', filename='uploads/' + produto.imagens[0]) }}" alt="{{ produto.nome }}" class="w-full h-auto object-cover rounded-lg shadow-md aspect-[4/5]"></div>
+                <div class="mb-4">
+                    <img id="main-image" src="{{ url_for('static', filename='uploads/' + produto.imagens[0]) }}"
+                         alt="{{ produto.nome }}" class="w-full h-auto object-cover rounded-lg shadow-md aspect-[4/5]">
+                </div>
                 <div class="grid grid-cols-5 gap-3">
                     {% for image_file in produto.imagens %}
-                    <div><img src="{{ url_for('static', filename='uploads/' + image_file) }}" alt="{{ produto.nome }}" class="thumbnail-image w-full h-auto object-cover rounded-md cursor-pointer border-2 hover:border-black transition aspect-square {% if loop.first %}active-thumbnail{% endif %}" onclick="changeImage('{{ url_for('static', filename='uploads/' + image_file) }}', this)"></div>
+                    <div>
+                        <img src="{{ url_for('static', filename='uploads/' + image_file) }}" alt="{{ produto.nome }}"
+                             class="thumbnail-image w-full h-auto object-cover rounded-md cursor-pointer border-2 hover:border-black transition aspect-square {% if loop.first %}active-thumbnail{% endif %}"
+                             onclick="changeImage('{{ url_for('static', filename='uploads/' + image_file) }}', this)">
+                    </div>
                     {% endfor %}
                 </div>
                 {% else %}
-                <img src="https://via.placeholder.com/600x750?text=STYLE" alt="{{ produto.nome }}" class="w-full object-cover rounded-lg shadow-md">
+                <img src="https://via.placeholder.com/600x750?text=STYLE" alt="{{ produto.nome }}"
+                     class="w-full object-cover rounded-lg shadow-md">
                 {% endif %}
             </div>
             
             <div class="sticky top-28">
-                <h1 class="heading text-4xl text-zinc-900">{{ produto.nome }}</h1>
+                <div class="flex justify-between items-center">
+                    <h1 class="heading text-4xl text-zinc-900">{{ produto.nome }}</h1>
+                    <button id="favorite-btn" class="text-2xl" data-product-id="{{ produto._id }}">
+                        <i id="favorite-icon"
+                           class="fa{% if produto._id in favoritos %}s{% else %}r{% endif %} fa-heart text-red-500 transition"></i>
+                    </button>
+                </div>
+
                 <p class="text-2xl font-semibold text-zinc-900 my-4">R$ {{ "%.2f"|format(produto.preco|float) }}</p>
                 <p class="text-zinc-600 leading-relaxed">{{ produto.descricao }}</p>
                 
+                {% if produto.detalhes and produto.product_type %}
+                <div class="border-t pt-4 mt-6">
+                    <h3 class="text-lg font-semibold mb-2">Detalhes</h3>
+                    <p><strong>Tipo:</strong> {{ produto.product_type | capitalize }}</p>
+                    
+                    {% if produto.product_type == 'camiseta' %}
+                        <p><strong>Gola:</strong> {{ produto.detalhes.tipo_gola | default('N/A') }}</p>
+                        <p><strong>Manga:</strong> {{ produto.detalhes.tipo_manga | default('N/A') }}</p>
+                    
+                    {% elif produto.product_type == 'sapato' %}
+                        <p><strong>Cor do Cadarço:</strong> {{ produto.detalhes.cor_cadarco | default('N/A') }}</p>
+                        <p><strong>Material da Sola:</strong> {{ produto.detalhes.material_sola | default('N/A') }}</p>
+                    
+                    {% elif produto.product_type == 'touca' %}
+                        <p><strong>Pompom:</strong> {% if produto.detalhes.tem_pompom %} Sim {% else %} Não {% endif %}</p>
+                    
+                    {% endif %}
+                </div>
+                {% endif %}
                 <form id="add-to-cart-form" class="mt-8">
                     <input type="hidden" name="product_id" value="{{ produto._id }}">
                     
@@ -30,7 +64,12 @@
                     <div class="mb-6">
                         <label class="font-semibold text-sm mb-2 block">COR</label>
                         <div class="flex flex-wrap gap-3">
-                            {% for color in produto.colors %}<label class="cursor-pointer"><input type="radio" name="color" value="{{ color }}" class="sr-only peer" required><div class="px-5 py-2 border rounded-md peer-checked:bg-black peer-checked:text-white">{{ color }}</div></label>{% endfor %}
+                            {% for color in produto.colors %}
+                            <label class="cursor-pointer">
+                                <input type="radio" name="color" value="{{ color }}" class="sr-only peer" required>
+                                <div class="px-5 py-2 border rounded-md peer-checked:bg-black peer-checked:text-white">{{ color }}</div>
+                            </label>
+                            {% endfor %}
                         </div>
                     </div>
                     {% endif %}
@@ -38,13 +77,19 @@
                     {% if produto.sizes %}
                     <div class="mb-6">
                         <label class="font-semibold text-sm mb-2 block">TAMANHO</label>
-                         <div class="flex flex-wrap gap-3">
-                            {% for size in produto.sizes %}<label class="cursor-pointer"><input type="radio" name="size" value="{{ size }}" class="sr-only peer" required><div class="w-14 h-12 flex items-center justify-center border rounded-md peer-checked:bg-black peer-checked:text-white">{{ size }}</div></label>{% endfor %}
+                        <div class="flex flex-wrap gap-3">
+                            {% for size in produto.sizes %}
+                            <label class="cursor-pointer">
+                                <input type="radio" name="size" value="{{ size }}" class="sr-only peer" required>
+                                <div class="w-14 h-12 flex items-center justify-center border rounded-md peer-checked:bg-black peer-checked:text-white">{{ size }}</div>
+                            </label>
+                            {% endfor %}
                         </div>
                     </div>
                     {% endif %}
 
-                    <button type="submit" class="w-full bg-black text-white font-semibold py-4 rounded-md hover:bg-zinc-800 transition">
+                    <button type="submit"
+                            class="w-full bg-black text-white font-semibold py-4 rounded-md hover:bg-zinc-800 transition">
                         ADICIONAR AO CARRINHO
                     </button>
                 </form>
@@ -52,12 +97,32 @@
         </div>
     </div>
 </section>
+
 <style>.active-thumbnail { border-color: #000 !important; }</style>
+
 <script>
-    function changeImage(newSrc, thumb) {
-        document.getElementById('main-image').src = newSrc;
-        document.querySelectorAll('.thumbnail-image').forEach(t => t.classList.remove('active-thumbnail'));
-        thumb.classList.add('active-thumbnail');
-    }
+function changeImage(newSrc, thumb) {
+    document.getElementById('main-image').src = newSrc;
+    document.querySelectorAll('.thumbnail-image').forEach(t => t.classList.remove('active-thumbnail'));
+    thumb.classList.add('active-thumbnail');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const favBtn = document.getElementById('favorite-btn');
+    const favIcon = document.getElementById('favorite-icon');
+    
+    favBtn.addEventListener('click', async function() {
+        const productId = this.dataset.productId;
+        const res = await fetch(`/favorites/toggle/${productId}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.status === 'added') {
+            favIcon.classList.remove('far'); 
+            favIcon.classList.add('fas');
+        } else if (data.status === 'removed') {
+            favIcon.classList.remove('fas');
+            favIcon.classList.add('far');
+        }
+    });
+});
 </script>
 {% endblock %}

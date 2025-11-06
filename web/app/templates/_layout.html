@@ -22,6 +22,9 @@
         <div class="container mx-auto px-6 h-20 flex justify-between items-center relative">
             <nav class="hidden md:flex items-center space-x-7 text-sm font-medium uppercase tracking-wider">
                 <a href="{{ url_for('routes.products') }}" class="text-zinc-900 hover:opacity-70 transition">Produtos</a>
+                {% if session.user_id %}
+                <a href="{{ url_for('routes.view_orders') }}" class="text-zinc-900 hover:opacity-70 transition">Meus Pedidos</a>
+                {% endif %}
                  {% if session.user_id %}
                  <a href="{{ url_for('routes.admin_products') }}" class="text-zinc-900 hover:opacity-70 transition">Gerenciar</a>
                 {% endif %}
