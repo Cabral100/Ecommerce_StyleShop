@@ -36,38 +36,6 @@ O objetivo é simular uma loja virtual funcional, com páginas de produtos, carr
 ✅ **Upload de imagens com verificação de formato (`.png`, `.jpg`, `.jpeg`, `.gif`)**  
 
 ---
-
-## Como executar
-
-- Clone o repositório
-```bash
-git clone https://github.com/Cabral100/ecommerce-flask.git
-cd ecommerce-flask
-```
-
-- Copie o arquivo de exemplo de variáveis
-```bash
-cp .env.example .env
-```
-
-- Construa e suba os containers
-
-```bash
-docker-compose up --build
-```
-
-- Acesse a aplicação
-
-```bash
-http://localhost:5000
-```
-
-- Parar a aplicação
-
-```bash
-docker-compose down
-```
-
 ##  Estrutura do Projeto
 
 ```bash
@@ -104,10 +72,42 @@ ecommerce-flask/
 ├── entrypoint.sh
 ├── run.txt
 └── README.md
-
+```
 
 
 ---
+
+## Como executar
+
+- Clone o repositório
+```bash
+git clone https://github.com/Cabral100/ecommerce-flask.git
+cd ecommerce-flask
+```
+
+- Copie o arquivo de exemplo de variáveis
+```bash
+cp .env.example .env
+```
+
+- Construa e suba os containers
+
+```bash
+docker-compose up --build
+```
+
+- Acesse a aplicação
+
+```bash
+http://localhost:5000
+```
+
+- Parar a aplicação
+
+```bash
+docker-compose down
+```
+
 
 
 
